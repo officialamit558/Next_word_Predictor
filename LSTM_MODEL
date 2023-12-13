@@ -1,0 +1,89 @@
+# Import relevent Library
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, LSTM, Dense
+
+
+# Sample Data set 
+data = '''
+    I enjoy working with
+    Machine learning is an
+    Natural language processing is
+    Deep learning models can
+    Recurrent neural networks are used for
+    Artificial intelligence is changing
+    The future of technology involves
+'''
+
+# Tokenized these word
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(['data'])
+len(tokenizer.word_index)
+
+# Now put the every sentences in list according to tokenized unique data
+
+input_sequences = []
+for sentence in data.split('\n'):
+  tokenized_sentence = tokenizer.texts_to_sequences([sentence])[0]
+
+  for i in range(1,len(tokenized_sentence)):
+    input_sequences.append(tokenized_sentence[:i+1])
+
+# Find the maximum length of list in input_sequences
+max_len = max(len(x) for x in input_sequences)
+
+# For Equalized the dimension of the all vector , than apply the pad_sequences method 
+# By this method we put the 0 values
+
+padded_input_sequences = pad_sequences(input_sequences, maxlen = max_len, padding='pre')
+
+# Remove the last element of every list and rest of element append in X
+X = padded_input_sequences[:,:-1] # input data or train data
+Y = padded_iput_sequences[:,-1]   # Output 
+
+# Our data procesing part is completed , This is time for make the LSTM model
+# For sending the data in LSTM model fist of all send values of X in Embedding layer ,
+# What is Embedding layer 
+# Embeding layer convert the values of all element in between 0 to 1
+# By Embeding , The chance of the sentimental analysis increases , increases of accuracy of the model
+
+model = Sequential()   # Set the sequential function in model , By which our model pass through specified sequences ,And increse the accuracy our model in sort duration
+model.add(Embedding(283, 100, input_length=--))   # Apply the embeding layer on which maximum length of vector is --
+model.add(LSTM(150))   # Apply the LSTM model
+model.add(LSTM(150))
+model.add(Dense(283, activation='softmax'))
+
+
+# Finaly compile our model 
+model.compile((loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'])
+
+# Cheak the dimension of the model
+model.summary()
+# Than fit our model
+model.fit(X,y,epochs=100)
+
+# Check the permonace of our model
+
+import time
+text = "what is the fee"
+
+for i in range(10):
+  # tokenize
+  token_text = tokenizer.texts_to_sequences([text])[0]
+  # padding
+  padded_token_text = pad_sequences([token_text], maxlen=--, padding='pre')
+  # predict
+  pos = np.argmax(model.predict(padded_token_text))
+
+  for word,index in tokenizer.word_index.items():
+    if index == pos:
+      text = text + " " + word
+      print(text)
+      time.sleep(2)
+
+
